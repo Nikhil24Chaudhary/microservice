@@ -1,0 +1,37 @@
+server:
+  port: 8084
+  
+spring :
+  application:
+    name : API-Gateway
+  data :
+    mongodb :
+      url : mongodb://localhost:27017
+      database: assignmentservice
+  cloud:
+    gateway:
+      routes:
+      - id: USER-SERVICE
+        uri: lb://USER-SERVICE
+        predicates:
+        - Path=/users/**
+
+      - id: CAREER-SERVICE
+        uri: lb://CAREER-SERVICE
+        predicates:
+        - Path=/career/**
+        
+      - id: ASSIGNMENT-SERVICE
+        uri: lb://ASSIGNMENT-SERVICE
+        predicates:
+        - Path=/assignment/**
+      
+
+
+eureka: 
+  client :
+    enabled : true
+    fetch-registry : true    register-with-eureka: true
+    service-url: 
+      defaultZone : http://localhost:9090/eureka      
+  instance:      prefer-ip-address: true 
