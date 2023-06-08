@@ -5,19 +5,21 @@ spring :
     mongodb :
       url : mongodb://localhost:27017
       database: careerservice
-      
+  config:
+    import: "optional:configserver:http://localhost:8888"
+
 server:
   port: 8081
 
 
-eureka: 
-  client :
-    enabled : true
-    fetch-registry : true
-    register-with-eureka: true
-    service-url: 
-      defaultZone : http://localhost:9090/eureka
+#eureka: 
+#  client :
+#    enabled : true
+#    fetch-registry : true
+#    register-with-eureka: true
+#    service-url: 
+#      defaultZone : http://localhost:9090/eureka
       
       
-  instance:
-      prefer-ip-address: true 
+#  instance:
+#      prefer-ip-address: true 
