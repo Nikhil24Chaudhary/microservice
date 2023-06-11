@@ -2,7 +2,6 @@ package com.user.controller;
 
 import java.util.List;
 
-import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.user.entity.User;
 import com.user.service.UserService;
+
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 
 @Controller
 @RequestMapping("/users")
@@ -38,12 +39,21 @@ public class UserController {
 		return ResponseEntity.status(HttpStatus.OK).body(users);
 	}
 
-	// fetch user by id
+	// fetch user by id - calling career service
 	@GetMapping("/{userId}")
+	@CircuitBreaker(name = "userCareerServiceBreaker", fallbackMethod = "userCareerServiceFallback")
 	public ResponseEntity<User> findUserProfileById(@PathVariable int userId) {
 		System.out.println("findUserById : " + userId);
 		User user = userService.findUserProfileById(userId);
 		return ResponseEntity.status(HttpStatus.OK).body(user);
+	}
+	
+	public  ResponseEntity<User>  userCareerServiceFallback(int userId, Exception e) {
+		System.out.println("Fallback Called - CareerService is down ");
+		User user = new User();
+		return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(user);
+		
+		
 	}
 
 }
